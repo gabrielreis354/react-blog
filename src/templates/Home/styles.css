@@ -1,0 +1,40 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 50px
+}
+
+.wrapperTitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-title {
+  text-align: center;
+  background-image: linear-gradient(90deg, rgb(143, 50, 241), rgb(16, 50, 199));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 3em;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: 500;
+}
+
+p {
+  font-size: 1.25em;
+  font-weight: 400;
+  margin: 0;
+}
+
+.buttonContainer {
+  margin: 100px 0;
+  display: flex;
+  align-items: flex-end;
+}

@@ -1,0 +1,33 @@
+.button {
+  width: 100%;
+  font-size: 1.5em;
+  background-color: #1a1a1a; /* Fundo escuro */
+  color: rgb(143, 50, 241); /* Torna o texto transparente para aplicar o gradiente */
+  border: 2px solid; /* Define a borda */
+  border-image: linear-gradient(90deg, rgb(143, 50, 241), rgb(16, 50, 199)) 1;
+  -webkit-background-clip: text; /* Aplica o gradiente ao texto */
+  background-clip: text;
+  padding: 15px 30px;
+  cursor: pointer;
+  border-radius: 8px;
+  box-shadow: 0 0 15px 0 rgba(143, 50, 241, 0.5);
+  transition: all 0.3s ease-in-out;
+}
+
+.button:hover {
+  border-image: linear-gradient(90deg, rgb(16, 50, 199), rgb(143, 50, 241)) 1; /* Inverte o gradiente na borda */
+  box-shadow: 0 0 20px 0 rgba(143, 50, 241, 0.7);
+  transform: scale(1.05); /* Leve aumento no tamanho */
+}
+
+.button:active {
+  transform: scale(0.98); /* Efeito de clique */
+}
+
+.button:disabled {
+  background-color: #333; /* Fundo mais escuro para estado desabilitado */
+  color: #888; /* Texto cinza */
+  border: 2px solid #555; /* Borda cinza */
+  cursor: not-allowed;
+  box-shadow: none;
+}
