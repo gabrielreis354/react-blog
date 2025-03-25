@@ -1,87 +1,73 @@
 import "./styles.css";
-import React, { Component } from "react";
-import { loadPosts } from "../../utils/load-posts.js";
+import React, { useEffect } from "react";
+import { loadPosts as carregarPosts } from "../../utils/load-posts.js";
 import { Posts } from "../../components/Posts";
 import { Button } from "../../components/Button/index.jsx";
 import { SearchInput } from "../../components/SearchInput/index.jsx";
 
-export class Home extends Component {
-  state = {
-    posts: [],
-    allPosts: [],
-    page: 0,
-    postsPerPage: 9,
-    searchValue: "",
-    filteredPosts: [],
-  };
+export const Home = () => {
+  const [posts, setPosts] = React.useState([]);
+  const [allPosts, setAllPosts] = React.useState([]);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [page, setPage] = React.useState(0);
+  const [postsPerPage] = React.useState(10);
+  const [filteredPosts, setFilteredPosts] = React.useState([]);
+  const noMorePosts = page + postsPerPage >= allPosts.length;
 
-  async componentDidMount() {
-    await this.loadPosts();
-  }
+  const filteringPosts = searchValue ? filteredPosts : posts;
 
-  loadPosts = async () => {
-    const { page, postsPerPage } = this.state;
-    const postsAndPhotos = await loadPosts();
+  const loadPosts = React.useCallback(async (page, postsPerPage) => {
+    const postsAndPhotos = await carregarPosts();
 
-    this.setState({
-      posts: postsAndPhotos.slice(page, postsPerPage),
-      allPosts: postsAndPhotos,
-    });
-  };
+    setPosts(postsAndPhotos.slice(page, postsPerPage));
+    setAllPosts(postsAndPhotos);
+  }, []);
 
-  loadMorePosts = () => {
-    const { page, postsPerPage, allPosts, posts } = this.state;
+  const loadMorePosts = () => {
     const nextPage = page + postsPerPage;
     const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);
     posts.push(...nextPosts);
 
-    this.setState({ posts, page: nextPage });
+    setPosts(posts);
+    setPage(nextPage);
   };
 
-  handleChange = (e) => {
+  const handleChange = (e) => {
     const { value } = e.target;
-    this.setState({ searchValue: value });
+    setSearchValue(value);
 
-    const filteredPosts = this.state.allPosts.filter((post) =>
+    const filteredPosts = allPosts.filter((post) =>
       post.title.toLowerCase().includes(value.toLowerCase())
     );
 
-    this.setState({ filteredPosts: filteredPosts });
+    setFilteredPosts(filteredPosts);
   };
 
-  render() {
-    const { posts, page, postsPerPage, allPosts, searchValue, filteredPosts } =
-      this.state;
+  useEffect(() => {
+    loadPosts(0, postsPerPage);
+  }, [loadPosts, postsPerPage]);
 
-    const noMorePosts = page + postsPerPage >= allPosts.length;
+  return (
+    <section className="container">
+      <div className="wrapperTitle">
+        <h1 className="main-title">Blog Posts</h1>
+        <SearchInput searchValue={searchValue} handleChange={handleChange} />
+      </div>
+      {filteringPosts.length > 0 ? (
+        <Posts posts={filteringPosts} />
+      ) : (
+        <h2>Nenhum post encontrado</h2>
+      )}
 
-    const filteringPosts = searchValue ? filteredPosts : posts;
-
-    return (
-      <section className="container">
-        <div className="wrapperTitle">
-          <h1 className="main-title">Blog Posts</h1>
-          <SearchInput
-            searchValue={searchValue}
-            handleChange={this.handleChange}
+      <div className="buttonContainer">
+        {!searchValue && filteringPosts.length > 0 && (
+          <Button
+            loadMorePosts={loadMorePosts}
+            text={"Load More Posts"}
+            disabled={noMorePosts}
           />
-        </div>
-        {filteringPosts.length > 0 ? (
-          <Posts posts={filteringPosts} />
-        ) : (
-          <h2>Nenhum post encontrado</h2>
         )}
-
-        <div className="buttonContainer">
-          {!searchValue && filteringPosts.length > 0 && (
-            <Button
-              loadMorePosts={this.loadMorePosts}
-              text={"Load More Posts"}
-              disabled={noMorePosts}
-            />
-          )}
-        </div>
-      </section>
-    );
-  }
-}
+      </div>
+    </section>
+  );
+};
